@@ -127,3 +127,17 @@ def sharpening(frame):
     #나눠줬던 BGR을 다시 합쳐주는 과정을 거친다.
     dst_frame = cv2.merge(frame_planes)
     return dst_frame
+
+def image_sum(B_img,S_img_1,S_img_2):
+    
+    S_img_1 = cv2.resize(S_img_1, (640,480))
+    S_img_2 = cv2.cvtColor(S_img_2,cv2.COLOR_GRAY2BGR)
+    S_img_2 = cv2.resize(S_img_2, (640,480))
+    B_img = cv2.resize(B_img, (1280,960))
+    dst = cv2.vconcat([S_img_1,S_img_2])
+    B_img = B_img[0:960,320:960]
+    dst = cv2.hconcat([B_img,dst])
+    
+    return dst
+    
+    
