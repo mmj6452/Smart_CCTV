@@ -10,7 +10,7 @@ from function.AI_CCTV import make_layout
 from function.AI_CCTV import histogram_equalization
 
 # 모델 주소 저장
-model_address ='Smart_CCTV\Model\keras_model.h5'
+model_address ='/Model/keras_model.h5'
 # 모델값 가져오기
 model = tensorflow.keras.models.load_model(model_address)
 
@@ -29,21 +29,21 @@ webcam.set(cv2.CAP_PROP_FOCUS,0)
 size = (round(webcam.get(cv2.CAP_PROP_FRAME_WIDTH)),round(webcam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 fps = 4
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('Smart_CCTV/video/output.avi', fourcc, fps, size)
+out = cv2.VideoWriter('/video/output.avi', fourcc, fps, size)
 if out.isOpened() == False: 
     raise Exception("비디오 쓰기 불가")
     webcam.release()
     sys.exit()
     
 #Latout 이미지 가져오기
-main_clicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/main_clicked.png"))
-main_unclicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/main_unclicked.png"))
-edge_clicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/edge_clicked.png"))
-edge_unclicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/edge_unclicked.png"))
-improved_clicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/improved_clicked.png"))
-improved_unclicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/improved_unclicked.png"))
-original_clicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/original_clicked.png"))
-original_unclicked = Layout_resize(cv2.imread("Smart_CCTV/Layout/original_unclicked.png"))
+main_clicked = Layout_resize(cv2.imread("/Layout/main_clicked.png"))
+main_unclicked = Layout_resize(cv2.imread("/Layout/main_unclicked.png"))
+edge_clicked = Layout_resize(cv2.imread("/Layout/edge_clicked.png"))
+edge_unclicked = Layout_resize(cv2.imread("/Layout/edge_unclicked.png"))
+improved_clicked = Layout_resize(cv2.imread("/Layout/improved_clicked.png"))
+improved_unclicked = Layout_resize(cv2.imread("/Layout/improved_unclicked.png"))
+original_clicked = Layout_resize(cv2.imread("/Layout/original_clicked.png"))
+original_unclicked = Layout_resize(cv2.imread("/Layout/original_unclicked.png"))
 
 #변수 선언 및 초기화
 human_detect = False
@@ -132,7 +132,7 @@ while True:
         human_detect = True
         frame_cnt = frame_cnt + detection_weight
         
-        path = 'Smart_CCTV/CCTV_img/'+str(frame_num)+'.jpg'
+        path = 'CCTV_img/'+str(frame_num)+'.jpg'
         print("해당 프레임이 저장되었습니다."+str(path))
         cv2.imwrite(str(path),save)
         out.write(save)

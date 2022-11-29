@@ -33,8 +33,7 @@ def Layout_resize(img):
     img = cv2.resize(img, (112,64), interpolation=cv2.INTER_AREA)
     return img
 
-
-
+#교재에서 가져온 필터함수1
 def filter(image , mask):
     rows,cols = image.shape[:2]
     dst = np.zeros((rows,cols),np.float32)
@@ -47,19 +46,19 @@ def filter(image , mask):
             tmp = cv2.multiply(roi, mask)
             dst[i, j] = cv2.sumElems(tmp)[0]
     return dst
-
+#교재에서 가져온 필터함수2
 def filter2(image, mask):
     rows, cols = image.shape[:2]
-    dst = np.zeros((rows, cols), np.float32)                 # 회선 결과 저장 행렬
-    xcenter, ycenter = mask.shape[1]//2, mask.shape[0]//2  # 마스크 중심 좌표
+    dst = np.zeros((rows, cols), np.float32)                 
+    xcenter, ycenter = mask.shape[1]//2, mask.shape[0]//2  
 
-    for i in range(ycenter, rows - ycenter):                  # 입력 행렬 반복 순회
+    for i in range(ycenter, rows - ycenter):                  
         for j in range(xcenter, cols - xcenter):
             sum = 0.0
-            for u in range(mask.shape[0]):                    # 마스크 원소 순회
+            for u in range(mask.shape[0]):                    
                 for v in range(mask.shape[1]):
                     y, x = i + u - ycenter , j + v - xcenter
-                    sum += image[y, x] * mask[u, v]           # 회선 수식
+                    sum += image[y, x] * mask[u, v]          
             dst[i, j] = sum
     return dst
 
