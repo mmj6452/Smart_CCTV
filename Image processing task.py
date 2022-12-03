@@ -2,17 +2,23 @@
 import tensorflow
 import numpy as np
 import cv2
-from function.AI_CCTV import AI_processing
+#from function.AI_CCTV import AI_processing
 from function.AI_CCTV import draw_warning
 from function.AI_CCTV import Layout_resize
 from function.AI_CCTV import image_sum
-from function.AI_CCTV import make_layout
+#from function.AI_CCTV import make_layout
 from function.AI_CCTV import histogram_equalization
 
 # 모델 주소 저장
-model_address ='/Model/keras_model.h5'
+#model_address ='Model/keras_model.h5'
 # 모델값 가져오기
-model = tensorflow.keras.models.load_model(model_address)
+#model = tensorflow.keras.models.load_model(model_address)
+
+#opencv 자체 사람감지 모델
+hog = cv2.HOGDescriptor()
+hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+
+cv2.startWindowThread()
 
 # 카메라에서 비디오 읽어오기
 webcam = cv2.VideoCapture(0)
@@ -29,21 +35,21 @@ webcam.set(cv2.CAP_PROP_FOCUS,0)
 size = (round(webcam.get(cv2.CAP_PROP_FRAME_WIDTH)),round(webcam.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 fps = 4
 fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-out = cv2.VideoWriter('/video/output.avi', fourcc, fps, size)
+out = cv2.VideoWriter('video/output.avi', fourcc, fps, size)
 if out.isOpened() == False: 
     raise Exception("비디오 쓰기 불가")
     webcam.release()
     sys.exit()
     
 #Latout 이미지 가져오기
-main_clicked = Layout_resize(cv2.imread("/Layout/main_clicked.png"))
-main_unclicked = Layout_resize(cv2.imread("/Layout/main_unclicked.png"))
-edge_clicked = Layout_resize(cv2.imread("/Layout/edge_clicked.png"))
-edge_unclicked = Layout_resize(cv2.imread("/Layout/edge_unclicked.png"))
-improved_clicked = Layout_resize(cv2.imread("/Layout/improved_clicked.png"))
-improved_unclicked = Layout_resize(cv2.imread("/Layout/improved_unclicked.png"))
-original_clicked = Layout_resize(cv2.imread("/Layout/original_clicked.png"))
-original_unclicked = Layout_resize(cv2.imread("/Layout/original_unclicked.png"))
+main_clicked = Layout_resize(cv2.imread("Layout/main_clicked.png"))
+main_unclicked = Layout_resize(cv2.imread("Layout/main_unclicked.png"))
+edge_clicked = Layout_resize(cv2.imread("Layout/edge_clicked.png"))
+edge_unclicked = Layout_resize(cv2.imread("Layout/edge_unclicked.png"))
+improved_clicked = Layout_resize(cv2.imread("Layout/improved_clicked.png"))
+improved_unclicked = Layout_resize(cv2.imread("Layout/improved_unclicked.png"))
+original_clicked = Layout_resize(cv2.imread("Layout/original_clicked.png"))
+original_unclicked = Layout_resize(cv2.imread("Layout/original_unclicked.png"))
 
 #변수 선언 및 초기화
 human_detect = False
@@ -64,6 +70,19 @@ while True:
 
     print("사람이 감지된 프레임갯수",frame_cnt)
     detection_weight = human_detect
+
+    boxes, weights = hog.detectMultiScale(frame, winStride=(8, 8))
+
+    print(weights)
+
+    boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
+
+    for (xA, yA, xB, yB) in boxes:
+        # display the detected boxes in the colour picture
+        cv2.rectangle(frame, (xA, yA), (xB, yB),
+                      (0, 255, 0), 2)
+
+
     
     #키입력을 받는다
     #d를 입력하면 break 오른쪽 화살표:Layout_state를 +1해준다 왼쪽은 반대
@@ -82,7 +101,7 @@ while True:
             
     
     #읽어온 프레임을 AI처리해서 0 ~ 1의 사이의 사람일 확률과 아닐 확률이 나온다.
-    Image_prediction = AI_processing(frame,model)
+    #Image_prediction = AI_processing(frame,model)
 
     #레이아웃 만드는 부분을 함수로 제작했지만 작동이 안되는 문제가 생겨서 바꿈
     if (Layout_state == 0):
@@ -119,7 +138,7 @@ while True:
     
     
     #이미지에 사람이 없을 확률이 더 높은므로 감지 변수를 초기화해준다
-    if (Image_prediction[0,0] < Image_prediction[0,1]):
+    if weights is ():
         print('Non')
         cv2.putText(frame, 'non', (0, 25), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0))
         frame_cnt = 0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
